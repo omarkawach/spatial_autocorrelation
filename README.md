@@ -6,165 +6,157 @@ Review the Zhong model maybe?
 
 ### Background
 
-Questions to answer
-1. Data manipulation
-   - Process, project, etc.
-2. spatial data statistical analysis
-3. spatial modelling
-4. visualizing 
-  - Spatial autocorrelation follows toplers law
-    - Spatial data = spatial autocorrelation
-    - introduces redundancy in data, affects the outcome of statistical tests and correlation coefficient
-      - CC = relationship between two values (or multiple locations) using Moran's I
-        - Check to see if patterns dont occur just by chance, accept or reject hypothesis, show the distribution is not random (cause and effect in data), p-value, z-score
-      - Moran's I to assess spatial autocorrelation (most people dont bother since data came as they were)
-        - where n is the number of regions or spatial units, with a weighting matrix (w)
-        - can incorporate contiguity, adjacency, and distance as well as attribute data (concepts of topology)
-        - between -1 and +1
-          - +ve is similar values found together
-          - -ve is disisimilar values found together (rare)
-          - 0 means dist is **random** and no spatial autocorrelation
-      - Look at dispersed (negative I) versus clustered (positive I)
-      - Measure signifigance of Moran's I
-        - Look at p-values (prob. spatial autocorrelation is correlated, look for low value )and z-score (absolute value means your data is likely to spatially autocorrelated, look for high value, stdev of mean)
-      - Distance decay
-        - Moran's I decreases as more observations (farther away) are included in the calculations, therefore less influence
-    - Use for finding hotspots (maybe like concencration of retired people, where are they in a population)
-    - Most stats assume data is random, but not when it comes to spatial data
-  - Map clusters (density, identify hotspots (of covid))
-  - Spatial relationships (weights matrix, GWR)
-  - nearest neighbour, inverse distance, and classifcations are not geostatistics
-  - spatiotemporal = space and time
-  - [First law of geography](https://wiki.gis.com/wiki/index.php/First_law_of_geography) 
+In normal cases, statistics prefers to have sampled data be random. However, this is not the case with spatial autocorrelaiton statistics. 
 
-Data issues with spatial dependce (how data relates in space)
+Things to discuss: 
+- Data manipulation
+- Statistical analysis
+- Modelling / Visualizing 
+
+Spatial autocorrelation statistics follows Toblers first law of Geography where near things are more related than distant things ([TFL](https://wiki.gis.com/wiki/index.php/First_law_of_geography)). 
+
+When conducting statistics tests, the outcome of the correlation coefficient from Moran's I explains the relationship between two values (or multiple locations).
+
+**Maybe use bivariate instead of "relationship between two values"?**. 
+
+The relationship between the two values can either be by chance or correlated (this is where you would reject or accept the hypothesis and show that the distribution is/isn't random, which is the same as cause and effect in data). Also look at p-value and z-score. 
+
+#### Moran's I 
+- In the formula: 
+  - n is the number of regions or spatial units
+  - w is the weights (will be discussed below)
+- Can incorporate topological relationship types (see my other repo for more background)
+- Output is between -1 and +1
+  - +ve is similar values found together
+  - -ve is disisimilar values found together (rare)
+  - 0 means distribution is **random** and no spatial autocorrelation
+- Measure signifigance 
+  - p-values (prob. spatial autocorrelation is correlated, look for low value )
+  - z-score (absolute value means your data is likely to spatially autocorrelated, look for high value)
+  - Distance decay
+    - Moran's I decreases as more observations (farther away) are included in the calculations, therefore less influence
+- Great for finding hotspots (LISA)
+- Spatial relationships (weights matrix, GWR)
+
+Nearest neighbour, inverse distance, and classifcations are generally not geostatistics
+
+#### Spatiotemporal (space and time)
+
+
+#### Limitations
+
+Spatial dependance issues (how data relates in space) that impact statistical tests
+
 - MAUP (Modifiable Areal Unit Problem)
+  - Boundaries impact statistical tests (look at stdev most importantly)
   - Location of boundaries used to aggregate data can influence results of statistical tests (Moran's I)
-  - How boundaries impact summary statistics (look at stdev most importantly)
-  - Gerrymandering is a good example of this (larger population decides the election)
-  - Difficult to get proportional representation (redrawing district lines), lopsided representation, political polarization
-- Scale can cause problems 
-  - Data can become homogenous, impacts autocorrelation 
-- Ecological fallacy like MAUP
+  - Gerrymandering is a good example of this 
+- Be aware for ecological fallacy 
   - Individuals vs Popuplations 
   - Cant take aggregated results and apply them to individuals
-  - statistical result change based on data aggregation
-  - Provincial average income versus municipal average income (cant assume an individual makes provincial avg if they live in Toronto)
+  - Statistical test results change based on data aggregation
+- Spatial Scale
 - Boundary Problem
-  - Segments data
-  - when data excluded due to boudnary, lose of information that influences the data that remains (we could pull things out of context)
-  - can impact statistical tests
-  - Best practice to keep SOME surrounding data
+  - Might lead to loss of information
 
-Limitations
-- GWR https://pro.arcgis.com/en/pro-app/tool-reference/spatial-statistics/geographicallyweightedregression.htm 
+Other issues exist
 
-https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7395580/ 
+- Does the neighbouring make sense? Remember that if you use queen or rook contiguity, you cant have islands or disconnected data since they will have less or no neighbours. You'd need to use a distance weight instead.
+  - Lower the weight of things further away if you do distance based weight which follows Toblers first law
 
-https://www.youtube.com/watch?v=V_OE8Kqp1dM 
 
-https://github.com/GeoDaCenter/covid 
+#### Spatial Lag Model
 
-https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7139267/ 
+[Read the spatial lag / autoregressive model SAR paper on The Biggest Myth in Spatial Econometrics ](https://www.mdpi.com/2225-1146/2/4/217/htm) 
 
-DOES THE NEIGHBORING MAKE SENSE??? YOU CANT HAVE ISLANDS SINCE THERE ARE NO NEIGHBOURS. YOU HAVE TO FIX THAT SOMEHOW
+[Regression Analysis](https://libraries.mit.edu/files/gis/regression_presentation_iap2013.pdf)
 
-LOWER THE WEIGHT OF THINGS FARTHER AWAY IF YOU DO DISTANCE (DISTANCE BASED WEIGHT) - TOPPLERS LAW
-
-ROW STANDARDIZATION WEIGHTS BETWEEN 0 AND 1, INTERPRETATION AS AVERAGE OF NEIGHBORS
-- instead of contiguity matrix (zeroes and ones if neighbors), it uses weights matrix
-  - you want to do this most of the time 
-    - you want the sum of all the weights to equal one 
-      - ex. three neighbours to one and divide by 3
-      - ex. 5 neighbours divide 1 by five
-    - gives each area we're interested in, and equal weight
-      - each give us an equal amount to what we're computing
+Things to note 
+- Row standardizaton weights between 0 and 1 and interpretation as average of neighbours
+- Probably want to use weights matrix instead of contiguity matrix (0s and 1s)
+    - Sum of all weights would then equal to one
+        - ex. three neighbours to one and divide by 3
+        - ex. 5 neighbours divide 1 by five
+    - Gives each area we're interested in an equal weight
+      - Each give us an equal amount to what we're computing
         - spatial correlating or regression
 
-LAG MODEL - spatial lag / autoregressive model SAR myth paper
-
-https://www.mdpi.com/2225-1146/2/4/217/htm
-
-Moran's I? What do the values mean? Maybe see how population impacts the number of neighbors you have? Check out space in geoda and click univariate morans i or do the local one to see potentially statistically signifcant areas
-- lisa cluster map
-- lisa signifigance map
-
-WEIGHT MATRICES FOR SPATIAL CORRELATION (shouldnt have large impact)
-- QUEEN
-  - shared boudnary or shared corner
-- ROOK
+Weight matrices (any of these shouldn't have too large of an impact)
+- Queen
+  - Shared boudnary or shared corner
+- Rook
   - only shared boudnary 
-- DISTANCE
-  - neighbors within distance (by row standardization)
-  - know if lat/lon or cartesian first 
-  - lon/lat
-    - use arc distance (over surface of sphere)
-  - cartesian 
-    - use euclidiean 
-- INVERSE DISTANCE
-  - closest in some sense by strongest neighbour 
-    - could be by non spatial aspects 
-  - 
-- KERNEL 
-- K-NEAREST neighbor (knn)
-  - x nearest neighbours 
-  - based on centroids and euclidian distance
+- Distance
+  - Make sure your data is projected properly (coordinate system)
+  - Neighbors within distance (by row standardization)
+  - Know if lat/lon or cartesian first 
+  - Lon / Lat
+    - Use arc distance (over surface of sphere)
+  - Cartesian 
+    - Use euclidiean 
+- Invserse distance
+  - Closest in some sense by strongest neighbour 
+    - Could be by non spatial aspects 
+- Kernel
+- K-nearest neighbor (knn)
+  - X # of nearest neighbours 
+  - Based on polygon centroids and euclidian distance
 
-PRESCISION FRESHOLD
-- when two shapes meet at a point, how precise do you want the point to be
-
-SYMMETRY
-- ASYMETRIC
-- NON ASYMETRIC
-
-ORDER OF CONTIGUITY
-- 1
-  - ONLY IF YOU TOUCH ON A BORDER OR CORNER DIRECTLY WILL U BE A NEIGHBOR
-- 2
-  - NEIGHBOR OF A NEIGHBOR IS ALSO A NEIGHBOR OF MINE LOCATION -> NEIGHBOR -> NEIGHBORS NEIGHBOR
-  - Here is where you should maybe select include lower orders
-
-What is spatial lag? https://libraries.mit.edu/files/gis/regression_presentation_iap2013.pdf 
-- Spatial autocorrelation http://ncgia.ucsb.edu/technical-reports/PDF/92-10.pdf
-
-- Not that it wont always be just 6 or 12 neighbours
-
-We have a shapefile containing the population and homes in hundreds of DAs.
-- Create knn weights k=6 and create an inverse as well https://geodacenter.github.io/workbook/4b_dist_weights/lab4b.html#creating-knn-weights 
-- Then do one with epanechnikov kernel weight
-- create spatially lagged variable
-  - spatial lag in table calculator 
-  - try with k6 first
-    - spatial lag with row standardized weights
-      - k6_sc_lag = avg houses of 6 neighbors = (x1 + x2 ... x6) / 6 with row standardized weights
-    - spatial lag as a sum of neighboring values
-      - k6_sc_lag2 = sum of pop of six neighbors
-    - spatial window average
-      - k6_sc_lag3 = the observation itself and the average so divided by 7 instead
-    - spatial window sum
-      - without dividing by 7
-
-### Spatial Statistics - COVID-19 Spread Model (weights)
-
-Grocery stores or crimes and then use as parameter for model and how it will evolve through the years
-
-Since the inception of TFL, researchers in the GIS community have employed such a concept to describe spatial dependence ([Leitner et al., 2018](https://www.researchgate.net/publication/323419139_Laws_of_Geography)). In the field of epidemiology, one could apply TFL to synthetically simulate the spread of infectious diseases in a geographical environment based on spatial weighting ([Zhong et al., 2009](https://www.researchgate.net/profile/Song_Dunjiang/publication/226204125_Simulation_of_the_spread_of_infectious_diseases_in_a_geographical_environment/links/00b495316b307a20ab000000/Simulation-of-the-spread-of-infectious-diseases-in-a-geographical-environment.pdf)). Such an application can play a vital role in disease prevention and control when coupled with modern spatio-temporal analysis techniques ([Watkins et al., 2007](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1805744/)). 
-
-The recent COVID-19 outbreak has made it apparent how unprepared governments are for a global pandemic of this scale ([Timmis, and Brussow, 2020](https://sfamjournals.onlinelibrary.wiley.com/doi/10.1111/1462-2920.15029)). Matters are made worse by the fact that large, and even small-scale problems are difficult for humans to conceptualize. This is especially true when we consider global issues like global warming ([Resnik et al., 2016](https://onlinelibrary.wiley.com/doi/full/10.1111/cogs.12388)). Given the unprecedented amount of data surrounding the ongoing pandemic, local / national / global real-time, non-real-time, or simulated disease cases must be carefully analyzed to recognize high risk geographical regions which may be susceptible to outbreaks or further disease spreading. 
+More factors to consider 
+- Precision threshold 
+    - When two shapes meet at a point, how precise do you want the point to be
+- Symmetry
+  - Asymetric
+  - Non-asymetric
+- Order of Contiguity
+  - 1 
+    - Only if you touch a border or a corner directly will you be a neighbour
+  - 2
+    - Neighbour of a neighbour is also a neighbour of mine 
+    - Your neighbour is also your neighbours neighbour?
+    - 
 
 
-Spatial models involving the spread of COVID-19 between populations offers a unique perspective into how cases can spread from densely populated areas to less dense areas ([Eilersen, and Sneppen, 2020](https://www.medrxiv.org/content/10.1101/2020.09.04.20188359v1.full.pdf) **NOT YET PEER REVIEWED**). In **Table 1**, the data retrieved from the City of Ottawa reveals the number of cumulative COVID-19 cases by ward as of September 25, 2020. The COVID-19 dataset from the City of Ottawa did not provide population statistics, so it had to be added manually by spatial joining data from an Ottawa DA shapefile. 
+#### Local Indicators of Spatial Association (Space tab in GeoDa)
 
-Do building density instead? Cases by population density isnt a good approach:
-- https://www.tandfonline.com/doi/full/10.1080/01944363.2020.1777891
-- https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7439635/
-- But some sources say otherwise? https://www.medrxiv.org/content/10.1101/2020.05.28.20115626v1.full.pdf
+Cluster Map (where the concentrations are, therefore hot spots and cold spots
+
+Spatial clusters
+- high high (red)
+  - high conc within itself and surrounding areas
+- low low (blue)
+  - low conc when surrounding areas have more conc
+
+Spatial outliers 
+- high low (light red) 
+  - high conc when surrounding areas have low conc
+- low high (light blue)
 
 
-Begin by collecting COVID data from Ottawa Public Health (Oct 2020)
-https://www.arcgis.com/home/item.html?id=7cf545f26fb14b3f972116241e073ada#overview
+LISA SIGNIFIGANCE MAP (see how confident we can be in our clusters, darkest values are most confident to show this relationship wasnt found by chance)
 
+Moran's I scatterplot (draws the cluster map)
 
+#### The weights process in GeoDa
+
+[Tutoria for knn](https://geodacenter.github.io/workbook/4b_dist_weights/lab4b.html#creating-knn-weights)
+
+- Take a shapefile
+- Load a weight
+- Create spatially lagged variable (spatial lag section in table calculator)
+  - Options (try these yourself to be sure, don't take my word for it)
+    - Spatial lag with row standardized weights
+      - Ex. Avg houses of 6 neighbors = (x1 + x2 ... x6) / 6 with row standardized weights
+    - Spatial lag as a sum of neighboring values
+      - Ex. Sum of the population of the six neighbors
+    - Spatial window average
+      - Ex. The observation itself and the average so divided by 7 instead
+    - Spatial window sum
+      - Ex. Same as above but without dividing by 7
+
+#### Developing the right shapefile
+
+Begin by collecting COVID data from [Ottawa Public Health (Oct 2020)](https://www.arcgis.com/home/item.html?id=7cf545f26fb14b3f972116241e073ada#overview)
 
 Get ward shapefile from open data 
 
@@ -176,78 +168,99 @@ Use coint points in polygons to find the number of buildings (centroids) within 
 
 Use vector join to get cases from OPH to ward shapefile
 
-Manually added median household income https://www.neighbourhoodstudy.ca/maps-2/#Economy%20&%20Employment/Household%20Income/Median%20household%20income%20(AT)
+Manually added [median household income from ONS](https://www.neighbourhoodstudy.ca/maps-2/#Economy%20&%20Employment/Household%20Income/Median%20household%20income%20(AT))
 
-Case data kept: 
-- Ottawa COV: Cumulative rate (per 100 000 population), excluding cases linked to outbreaks in LTCH and RH – cumulative number of residents with confirmed COVID-19 in a Ward, excluding those linked to outbreaks in LTCH and RH, divided by the total population of that Ward
-- Ottawa C_1: Cumulative number of cases, excluding cases linked to outbreaks in LTCH and RH - cumulative number of residents with confirmed COVID-19 in a Ward, excluding cases linked to outbreaks in LTCH and RH
-- Ottawa C_2: Cumulative number of cases linked to outbreaks in LTCH and RH - Number of residents with confirmed COVID-19 linked to an outbreak in a long-term care home or retirement home by Ward
+Any values <5 were changed to 1
 
-Maybe specify that buildings arent the only factor that impact the chances of getting COVID. Population, age, income, etc. influence the vulnerability. 
+### Spatial Statistics - COVID-19 Spread Model (weights)
 
-Anything <5 changed to 1
-
-**Table 1**. cumulative  COVID-19 Cases as Reported on September 25 (maybe use more up to date info later)
-
-<img src="" alt="cases_by_ward" width="420" height="450" />
-
-**Note**: Exlucdes retirement home and longterm care home cases
-
-To better visualize the data from **Table 1**, the number of cases per capita (*Cumu_cases / Population*) was plotted onto a map using quantile classification (6 classes).
+*Possible Use Case*
+1. Grab paramaters for whatever model we're building, Zhong in thsi case?
+   - Maybe introuce a penalty in the SIR model for being in a poor neighbourhood
+2. We could see which buildings are in a DA and connect them for population growth analysis.
+   - Does the number of buildings in a DA impact population? Will likely need statistics data for this
+3. Grocery stores or crimes and how they evolve through the years 
 
 
-![]()
+Since the inception of TFL, researchers in the GIS community have employed such a concept to describe spatial dependence ([Leitner et al., 2018](https://www.researchgate.net/publication/323419139_Laws_of_Geography)). In the field of epidemiology, one could apply TFL to synthetically simulate the spread of infectious diseases in a geographical environment based on spatial weighting ([Zhong et al., 2009](https://www.researchgate.net/profile/Song_Dunjiang/publication/226204125_Simulation_of_the_spread_of_infectious_diseases_in_a_geographical_environment/links/00b495316b307a20ab000000/Simulation-of-the-spread-of-infectious-diseases-in-a-geographical-environment.pdf)). Such an application can play a vital role in disease prevention and control when coupled with modern spatio-temporal analysis techniques ([Watkins et al., 2007](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1805744/)). 
 
-**Figure 1**. COVID-19 cases per capita 
-
-Before thematically identifying which wards are at a high risk of disease case spillover (USE A BETTER WORD), a Queen matrix was applied to the Ottawa Wards shapefile to find each ward's neighbours by shared border and corners. 
-
-![]()
-
-**Figure 2**. Osgoode Ward and it's Neighbours  
-
-A spatial lag calculator with row-standardized weights would give every ward an equal weight since the Queen matrix would be fractional instead of zeroes and ones (contiguity). Using the spatial lag calculator, one could sum the number of cases in each neighbouring ward and then divide by the number of neighboring wards (*Queen * (Cumu_cases / Population)*). Plotting this result shows the wards at a high risk of disease spillover (USE A BETTER WORD) from neighbouring wards. 
+The recent COVID-19 outbreak has made it apparent how unprepared governments are for a global pandemic of this scale ([Timmis, and Brussow, 2020](https://sfamjournals.onlinelibrary.wiley.com/doi/10.1111/1462-2920.15029)). Matters are made worse by the fact that large, and even small-scale problems are difficult for humans to conceptualize. This is especially true when we consider global issues like global warming ([Resnik et al., 2016](https://onlinelibrary.wiley.com/doi/full/10.1111/cogs.12388)). Given the unprecedented amount of data surrounding the ongoing pandemic, local / national / global real-time, non-real-time, or simulated disease cases must be carefully analyzed to recognize high risk geographical regions which may be susceptible to outbreaks or further disease spreading. 
 
 
-![](g)
-**Figure 3**. Quantile Classification of Wards at Risk of Disease Spillover (USE A BETTER WORD)
+Spatial models involving the spread of COVID-19 between populations offers a unique perspective into how cases can spread from densely populated areas to less dense areas ([Eilersen, and Sneppen, 2020](https://www.medrxiv.org/content/10.1101/2020.09.04.20188359v1.full.pdf) **NOT YET PEER REVIEWED**). THERE ENDED UP BEING NO SPATIAL CORRELATION WHEN I ATTEMPTED THIS.
 
 NEED TO VALIDATE COVID SPREAD MODEL (spatial autocorrelation to confirm spatial dependecy) https://geodacenter.github.io/workbook/5a_global_auto/lab5a.html
 https://geodacenter.github.io/workbook/5b_global_adv/lab5b.html 
 
-- Queen weight using ward#
-- Click univariate local moran's I and select cummulative covid cases
-
-Local indicators of spatial association (LISA) for clustering
-
-LISA CLUSTER MAP (where the concentration of covid cases are, therefore hot spots and cold spots
-
-Maybe only consider high high?
-
-spatial clusters
-- high high (red)
-  - high cases within itself and surrounding areas
-- low low (blue)
-  - low cases when surrounding areas have more cases
-
-spatial outliers 
-- high low (light red) 
-  - high cases when surrounding areas have low cases
-- low high (light blue)
-
-![]()
+Do building density instead? Cases by population density ALSO isnt a good approach:
+- https://www.tandfonline.com/doi/full/10.1080/01944363.2020.1777891
+- https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7439635/
+- But some sources say otherwise? https://www.medrxiv.org/content/10.1101/2020.05.28.20115626v1.full.pdf
 
 
-LISA SIGNIFIGANCE MAP (see how confident we can be in our clusters, darkest values are most confident to show this relationship wasnt found by chance)
-![]()
-
-Moran's I scatterplot (draws the cluster map)
-![]()
+Maybe specify that buildings arent the only factor that impact the chances of getting COVID? Population, age, income, etc. influence the vulnerability. 
 
 
+## Credits and Acknowledgements
 
-https://www.medrxiv.org/content/10.1101/2020.05.28.20115626v1.full.pdf
+[Carleton University - ARSLab](https://arslab.sce.carleton.ca/) 
 
-*Possible Use Case*
-1. We could see which buildings are in a DA and connect them for population growth analysis.
-   - Does the number of buildings in a DA impact population? Will likely need statistics data for this
+[Sarah Loos - UVic GEOG 328 GIS Analysis](https://www.uvic.ca/calendar/undergrad/#/courses/BkL7SOamV?bc=true&bcCurrent=GIS%20Analysis&bcItemType=Courses)
+
+## Resources
+
+### Further Reading
+
+[Want to maybe accomplish what GeoDa did for COVID analysis?](https://github.com/GeoDaCenter/covid)
+
+[Spatial data analysis with GIS in social sciences](http://ncgia.ucsb.edu/technical-reports/PDF/92-10.pdf)
+
+[An ICES report stated Ontarians who tested positive for COVID were more likely to come from lower income neighbourhoods.](https://www.ices.on.ca/Publications/Atlases-and-Reports/2020/COVID-19-Laboratory-Testing-in-Ontario)
+
+[Investigating spatiotemporal patterns of the COVID-19 in São Paulo State, Brazil](https://www.medrxiv.org/content/10.1101/2020.05.28.20115626v1.full.pdf)
+
+[Geographically Weighted Regression (GWR) (Spatial Statistics)](https://pro.arcgis.com/en/pro-app/tool-reference/spatial-statistics/geographicallyweightedregression.htm)
+
+[The spatial econometrics of the coronavirus pandemic](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7395580/)
+
+[Determining the spatial effects of COVID-19 using the spatial panel data model](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7139267/)
+
+### Video Tutorials
+
+[Making Spatial Weights - GeoDa](https://www.youtube.com/watch?v=V_OE8Kqp1dM )
+
+### Geospatial Analysis Program(s)
+
+[GeoDa: ](https://geodacenter.github.io/)Spatial Data Analysis Program
+
+[QGIS Download: ](https://www.qgis.org/en/site/)Open Source Geospatial Analysis Program
+
+[QGIS Docs: ](https://www.qgistutorials.com/en/)Tutorials and Tips
+
+## Appendix
+
+### Dataset Sources
+
+
+**[Ottawa Neighbourhood Study (ONS) from Carleton University](https://library.carleton.ca/find/gis/geospatial-data/ottawa-neighbourhoods)**
+
+*Description from source:*
+```
+The ONS Neighbourhood Boundaries were created by the Ottawa Neighbourhood Study
+(ONS) to analyse population statistics and are not indicative of actual 
+neighbourhood limits.  Neighbourhood refers to an inhabited area delineated by 
+social and physical boundaries. ONS neighbourhood boundaries were derived based on 
+census tracts, physical and demographic similarities, physical barriers (e.g. 
+waterways, highways, etc.), maps used by the real estate profession (e.g. the 
+Ottawa Multiple Listing Service), consultations with community stakeholders, as 
+well as fieldwork by ONS researchers.
+
+108 neighbourhood boundaries are included in the shapefile, 
+from Barrhaven to Woodvale. 
+```
+
+**[Ottawa COVID cases (2020 October 20)](https://www.arcgis.com/home/item.html?id=ae347819064d45489ed732306f959a7e)**
+
+**[Ottawa Wards](https://open.ottawa.ca/datasets/wards?geometry=-77.634%2C44.911%2C-73.968%2C45.587)**
+
+**[ONS COVID (2020 Oct 10)](https://www.arcgis.com/home/item.html?id=7cf545f26fb14b3f972116241e073ada)**
