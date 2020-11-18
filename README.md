@@ -175,17 +175,11 @@ Any values <5 were changed to 1
 ### Spatial Statistics - COVID-19 Spread Model (weights)
 
 *Possible Use Case*
-1. Grab paramaters for whatever model we're building, Zhong in thsi case?
+1. Grab paramaters for whatever model we're building, Zhong in this case?
    - Maybe introuce a penalty in the SIR model for being in a poor neighbourhood
 2. We could see which buildings are in a DA and connect them for population growth analysis.
    - Does the number of buildings in a DA impact population? Will likely need statistics data for this
 3. Grocery stores or crimes and how they evolve through the years 
-
-
-Since the inception of TFL, researchers in the GIS community have employed such a concept to describe spatial dependence ([Leitner et al., 2018](https://www.researchgate.net/publication/323419139_Laws_of_Geography)). In the field of epidemiology, one could apply TFL to synthetically simulate the spread of infectious diseases in a geographical environment based on spatial weighting ([Zhong et al., 2009](https://www.researchgate.net/profile/Song_Dunjiang/publication/226204125_Simulation_of_the_spread_of_infectious_diseases_in_a_geographical_environment/links/00b495316b307a20ab000000/Simulation-of-the-spread-of-infectious-diseases-in-a-geographical-environment.pdf)). Such an application can play a vital role in disease prevention and control when coupled with modern spatio-temporal analysis techniques ([Watkins et al., 2007](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1805744/)). 
-
-The recent COVID-19 outbreak has made it apparent how unprepared governments are for a global pandemic of this scale ([Timmis, and Brussow, 2020](https://sfamjournals.onlinelibrary.wiley.com/doi/10.1111/1462-2920.15029)). Matters are made worse by the fact that large, and even small-scale problems are difficult for humans to conceptualize. This is especially true when we consider global issues like global warming ([Resnik et al., 2016](https://onlinelibrary.wiley.com/doi/full/10.1111/cogs.12388)). Given the unprecedented amount of data surrounding the ongoing pandemic, local / national / global real-time, non-real-time, or simulated disease cases must be carefully analyzed to recognize high risk geographical regions which may be susceptible to outbreaks or further disease spreading. 
-
 
 Spatial models involving the spread of COVID-19 between populations offers a unique perspective into how cases can spread from densely populated areas to less dense areas ([Eilersen, and Sneppen, 2020](https://www.medrxiv.org/content/10.1101/2020.09.04.20188359v1.full.pdf) **NOT YET PEER REVIEWED**). THERE ENDED UP BEING NO SPATIAL CORRELATION WHEN I ATTEMPTED THIS.
 
